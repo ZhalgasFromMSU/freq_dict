@@ -15,10 +15,10 @@ namespace NFreq {
                 ++(*c);
             }
             const char* viewBegin;
-            if (*c != nullptr) {
-                viewBegin = *c;
-            } else {
+            if (**c == '\0') [[unlikely]] {
                 return std::string_view{};
+            } else {
+                viewBegin = *c;
             }
 
             while (**c != '\0' && std::isalpha(**c)) {
@@ -30,6 +30,7 @@ namespace NFreq {
     } // namespace
 
     TNonOwningFrequencyDict::TNonOwningFrequencyDict(std::string* s) noexcept {
+        Frequencies_.reserve(s->size()); // because why not
         char* c = s->data();
         std::string_view token = NextTokenAndToLower(&c);
         while (token.size()) {
